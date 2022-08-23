@@ -3,7 +3,7 @@ import numpy as np
 import warnings
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 
-data = nc.Dataset("nlinear1/test2/c1.out.nc")
+data = nc.Dataset("nlinear1/test4/c1.out.nc") #test2 folder is baseline that works
 S_transfer = np.array(data["entropy_transfer"][:])
 
 S_transfer_python = np.load("Stransfer-test2_entropy.npz")
