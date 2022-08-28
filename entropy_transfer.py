@@ -31,7 +31,7 @@ def parallel_compute_ENTROPY_transfer_along_theta_energy_lambda_sign():
 def parallel_compute_ENTROPY_transfer_wrapper(i_theta,i_energy,i_lambda,i_sign):
     #print("Computing net transfer for theta,energy,lambda,sign = {},{},{},{}" \
     #      .format(ds["theta"].values[i_theta],ds["energy"].values[i_energy],ds["lambda"].values[i_lambda],i_sign))
-    result1 = 1 #get_Maxwellian_pre_factor(ds["lambda"][i_lambda].values,ds["energy"][i_energy].values,ds["bmag"][i_theta].values)
+    result1 = get_Maxwellian_pre_factor(ds["lambda"][i_lambda].values,ds["energy"][i_energy].values,ds["bmag"][i_theta].values)
     result2 = compute_ENTROPY_transfer_this_theta(
        g[:,:,i_theta,0,i_energy,i_lambda,i_sign].values,
        ds["phi_t"][:, :, :, i_theta, :].values,
