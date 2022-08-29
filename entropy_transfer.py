@@ -127,8 +127,8 @@ def compute_phi_m_at_last_t(phi, ikx0, iky0):
             for ikxs in range(nkx):
                 for ikxt in range(nkx):
                     # Work out index of mediator
-                    ikxm = ikxt - ikxs + ikx0
-                    ikym = ikyt - ikys + iky0
+                    ikxm = -ikxt - ikxs + 3*ikx0
+                    ikym = -ikyt - ikys + 3*iky0
                     # Check mediator index exists
                     if not (0 <= ikxm and ikxm < nkx and 0 <= ikym and ikym < nky):
                         # Just don't set a value to avoid unnecessary cache misses
@@ -148,8 +148,8 @@ def compute_g_m(g, ikx0, iky0):
             for ikxs in range(nkx):
                 for ikxt in range(nkx):
                     # Work out index of mediator
-                    ikxm = ikxt - ikxs + ikx0
-                    ikym = ikyt - ikys + iky0
+                    ikxm = -ikxt - ikxs + 3*ikx0
+                    ikym = -ikyt - ikys + 3*iky0
                     # Check mediator index exists
                     if not (0 <= ikxm and ikxm < nkx and 0 <= ikym and ikym < nky):
                         # Just don't set a value to avoid unnecessary cache misses
