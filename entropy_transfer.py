@@ -175,7 +175,7 @@ def compute_net_entropy_transfer(g_t,g_s,phi,g_m,phi_m):
 
 def get_Maxwellian_pre_factor(lambdaa,energyy,bmagg):
     c = (((2*np.pi)**(3/2))/(2*bmagg))
-    return c*np.exp(energyy*(1+bmagg/(2*lambdaa)))
+    return c*np.exp(energyy*(1+(lambdaa*bmagg)/2))
 
 if __name__ == "__main__":
     ''' Parse command line inputs:
