@@ -20,7 +20,8 @@ ikx0 = np.argmin(np.abs(kx))
 iky0 = np.argmin(np.abs(ky))
 ikyt = iky0
 
-S_transfer_python_sum = np.array(S_transfer_python_sum[:,:,ikyt,:,:])
+#set zonal ky target and only use result of ky >= 0 values, symmetric anyways
+S_transfer_python_sum = np.array(S_transfer_python_sum[:,iky0:,ikyt,:,:])
 
 digit_precision = 5
 
