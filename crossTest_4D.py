@@ -11,6 +11,15 @@ S_transfer_python_sum = np.sum(S_transfer_python["entropy_result"],axis=(0,1,2,3
 
 digit_precision = 5
 
+#take out result of ky >= 0, negative kys result is symmetric to positive ones
+ky = S_transfer_python["ky"]
+nky = len(ky)
+iky0 = np.argmin(np.abs(ky))
+
+
+S_transfer_python_sum = S_transfer_python_sum[iky0:,iky0:,:,:]
+
+
 #normalise to take powers of ten away and to make decimal rounding sensible
 TransferMax = S_transfer.max()
 S_transfer /= TransferMax
