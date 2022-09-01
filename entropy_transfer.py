@@ -31,7 +31,7 @@ def parallel_compute_ENTROPY_transfer_along_theta_energy_lambda_sign():
 def parallel_compute_ENTROPY_transfer_wrapper(i_theta,i_energy,i_lambda,i_sign):
     #print("Computing net transfer for theta,energy,lambda,sign = {},{},{},{}" \
     #      .format(ds["theta"].values[i_theta],ds["energy"].values[i_energy],ds["lambda"].values[i_lambda],i_sign))
-    result1 = 1 #get_Maxwellian_pre_factor(ds["lambda"][i_lambda].values,ds["energy"][i_energy].values,ds["bmag"][i_theta].values)
+    result1 = get_Maxwellian_pre_factor(ds["lambda"][i_lambda].values,ds["energy"][i_energy].values,ds["bmag"][i_theta].values)
     result2 = compute_ENTROPY_transfer_this_theta(
        g[:,:,i_theta,0,i_energy,i_lambda,i_sign].values,
        ds["phi_t"][:, :, :, i_theta, :].values,
@@ -127,8 +127,8 @@ def compute_phi_m_at_last_t(phi, ikx0, iky0):
             for ikxs in range(nkx):
                 for ikxt in range(nkx):
                     # Work out index of mediator
-                    ikxm = ikxt - ikxs + ikx0
-                    ikym = ikyt - ikys + iky0
+                    ikxm = -ikxt - ikxs + 3*ikx0
+                    ikym = -ikyt - ikys + 3*iky0
                     # Check mediator index exists
                     if not (0 <= ikxm and ikxm < nkx and 0 <= ikym and ikym < nky):
                         # Just don't set a value to avoid unnecessary cache misses
@@ -148,8 +148,8 @@ def compute_g_m(g, ikx0, iky0):
             for ikxs in range(nkx):
                 for ikxt in range(nkx):
                     # Work out index of mediator
-                    ikxm = ikxt - ikxs + ikx0
-                    ikym = ikyt - ikys + iky0
+                    ikxm = -ikxt - ikxs + 3*ikx0
+                    ikym = -ikyt - ikys + 3*iky0
                     # Check mediator index exists
                     if not (0 <= ikxm and ikxm < nkx and 0 <= ikym and ikym < nky):
                         # Just don't set a value to avoid unnecessary cache misses
@@ -175,7 +175,7 @@ def compute_net_entropy_transfer(g_t,g_s,phi,g_m,phi_m):
 
 def get_Maxwellian_pre_factor(lambdaa,energyy,bmagg):
     c = (((2*np.pi)**(3/2))/(2*bmagg))
-    return c*np.exp(energyy*(1+bmagg/(2*lambdaa)))
+    return c*np.exp(energyy*(1+(lambdaa*bmagg)/2))
 
 if __name__ == "__main__":
     ''' Parse command line inputs:
