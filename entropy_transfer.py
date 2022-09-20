@@ -163,12 +163,13 @@ def compute_net_entropy_transfer(g_t,g_s,phi,g_m,phi_m):
     T_s = (
         z_hat_dot_k_cross_k_prime
         * (
-             np.reshape(g_t,(1,nky,1,nkx))
-              * phi_m
-              * np.reshape(g_s,(nky,1,nkx,1)) -
-              np.reshape(g_t,(1,nky,1,nkx))
-              *g_m
-              *np.reshape(phi,(nky,1,nkx,1))
+             np.reshape(g_t,(1,nky,1,nkx)) *
+		(
+              	g_m
+              	*np.reshape(phi,(nky,1,nkx,1)) -
+ 		phi_m
+              	* np.reshape(g_s,(nky,1,nkx,1))
+		)
           ).real
     )
     return T_s
