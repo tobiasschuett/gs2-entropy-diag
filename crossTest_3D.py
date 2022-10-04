@@ -23,7 +23,6 @@ ikyt = iky0
 #set zonal ky target and only use result of ky >= 0 values, symmetric anyways
 S_transfer_python_sum = np.array(S_transfer_python_sum[:,iky0:,ikyt,:,:])
 
-# set last timestep with "-1" and set kyt = 0 with "0"
 A = S_transfer[-1,:,:,:,:]
 B = S_transfer_python_sum
 
