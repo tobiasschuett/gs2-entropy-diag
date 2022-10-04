@@ -25,6 +25,10 @@ TransferMax = S_transfer.max()
 S_transfer /= TransferMax
 S_transfer_python_sum /= TransferMax
 
+print(TransferMax)
+print(np.mean(S_transfer))
+print(np.mean(S_transfer_python_sum))
+
 A = np.round(S_transfer[-1,:,:,:,:],digit_precision)
 B = np.round(S_transfer_python_sum,digit_precision)
 

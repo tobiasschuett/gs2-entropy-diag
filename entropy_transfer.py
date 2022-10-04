@@ -4,6 +4,7 @@ import sys
 import xarray as xr
 from itertools import product
 import helpers as h
+import scipy.special
 
 # computes only entropy transfer and not the moment based transfer
 # all functions based on Steve's work
@@ -31,7 +32,9 @@ def parallel_compute_ENTROPY_transfer_along_theta_energy_lambda_sign():
 def parallel_compute_ENTROPY_transfer_wrapper(i_theta,i_energy,i_lambda,i_sign):
     #print("Computing net transfer for theta,energy,lambda,sign = {},{},{},{}" \
     #      .format(ds["theta"].values[i_theta],ds["energy"].values[i_energy],ds["lambda"].values[i_lambda],i_sign))
-    result1 = get_Maxwellian_pre_factor(ds["lambda"][i_lambda].values,ds["energy"][i_energy].values,ds["bmag"][i_theta].values)
+    result1 = get_prefactor(ds["temp"][0].values,ds["dens"][0].values,ds["mass"][0].values,
+              ds["energy"][i_energy].values,ds["bmag"][i_theta].values)
+
     result2 = compute_ENTROPY_transfer_this_theta(
        g[:,:,i_theta,0,i_energy,i_lambda,i_sign].values,
        ds["phi_t"][:, :, :, i_theta, :].values,
@@ -174,9 +177,15 @@ def compute_net_entropy_transfer(g_t,g_s,phi,g_m,phi_m):
     )
     return T_s
 
-def get_Maxwellian_pre_factor(lambdaa,energyy,bmagg):
-    c = (((2*np.pi)**(3/2))/(2*bmagg))
-    return c*np.exp(energyy*(1+(lambdaa*bmagg)/2))
+def get_prefactor(temperature,mass,density,energyy,bmagg):
+    """
+    Get the full normalised prefactor = (hat{T}_{s} \hat{F}_{0s} \hat{J}_{0sk})/ \hat{B}
+    """
+    #k_perp = 
+    #bessel = scipy.special.jv(0.0,k_perp)
+    F0 = density*(mass/(2*np.pi*temperature))**(3.0/2.0)*np.exp(-energyy/temperature)
+
+    return F0*temperature/(2*bmagg) #*bessel
 
 if __name__ == "__main__":
     ''' Parse command line inputs:
@@ -200,7 +209,7 @@ if __name__ == "__main__":
         ds = xr.open_dataset(input_filename)
         
     # Remove un-used variables
-    required_vars = ["theta", "kx", "ky", "density_t", "ntot_t", "phi_t","energy","lambda","bmag"]
+    required_vars = ["theta", "kx", "ky", "density_t", "ntot_t", "phi_t","energy","lambda","bmag","temp","mass","dens"]
     vars_to_delete = []  
     for v in ds.data_vars:
         if v not in required_vars:
