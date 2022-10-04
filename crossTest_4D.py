@@ -20,6 +20,9 @@ S_transfer_python_sum = S_transfer_python_sum[iky0:,iky0:,:,:]
 A = S_transfer[-1,:,:,:,:]
 B = S_transfer_python_sum
 
+#print("A",A)
+#print("B",B)
+
 resultsAgree = np.allclose(A,B)
 
 print("python script and gs2 diagnostic compared with default rel_tol and abs_tol, result")

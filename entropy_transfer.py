@@ -32,14 +32,18 @@ def parallel_compute_ENTROPY_transfer_along_theta_energy_lambda_sign():
 def parallel_compute_ENTROPY_transfer_wrapper(i_theta,i_energy,i_lambda,i_sign):
     #print("Computing net transfer for theta,energy,lambda,sign = {},{},{},{}" \
     #      .format(ds["theta"].values[i_theta],ds["energy"].values[i_energy],ds["lambda"].values[i_lambda],i_sign))
-    result1 = get_prefactor(ds["temp"][0].values,ds["dens"][0].values,ds["mass"][0].values,
-              ds["energy"][i_energy].values,ds["bmag"][i_theta].values)
-
-    result2 = compute_ENTROPY_transfer_this_theta(
-       g[:,:,i_theta,0,i_energy,i_lambda,i_sign].values,
-       ds["phi_t"][:, :, :, i_theta, :].values,
+    prefactor = get_prefactor(
+        ds["temp"][0].values,ds["dens"][0].values,
+        ds["mass"][0].values,ds["energy"][i_energy].values,
+        ds["bmag"][i_theta].values
     )
-    return result1*result2
+
+    result = compute_ENTROPY_transfer_this_theta(
+        g[:,:,i_theta,0,i_energy,i_lambda,i_sign].values,
+        ds["phi_t"][:, :, :, i_theta, :].values,
+    )
+
+    return prefactor*result
 
 def compute_ENTROPY_transfer_this_theta(g,phi): #basically same as the function above
     # ri to complex already done before in get_g()
@@ -162,8 +166,34 @@ def compute_g_m(g, ikx0, iky0):
     # Return output array
     return g_m
 
+def compute_bessel_of_mediator():
+    #compute bessel function of first kind of order 0 of abs(k_2)
+    # that is J_{0sk_m) = J_0(abs(k_m))
+
+    bessel = np.zeros((nky, nky, nkx, nkx))
+
+    for ikys in range(nky):
+        for ikyt in range(nky):
+            for ikxs in range(nkx):
+                for ikxt in range(nkx):
+                    # Work out index of mediator
+                    ikxm = -ikxt - ikxs + 3*ikx0
+                    ikym = -ikyt - ikys + 3*iky0
+                    # Check mediator index exists
+                    if not (0 <= ikxm and ikxm < nkx and 0 <= ikym and ikym < nky):
+                        # Just don't set a value to avoid unnecessary cache misses
+                        continue
+                    # Store mediator value in mediator array
+                    kxm, kym = kx[ikxm], ky[ikym]
+                    km_abs = np.sqrt(kxm**2+kym**2) #magnitude of mediator
+                    bessel[ikys, ikyt, ikxs, ikxt] = scipy.special.jv(0.0,km_abs)
+    # Return output array
+    return bessel
+    
+
 def compute_net_entropy_transfer(g_t,g_s,phi,g_m,phi_m): 
     T_s = (
+        bessel_factor *
         z_hat_dot_k_cross_k_prime
         * (
              np.reshape(g_t,(1,nky,1,nkx)) *
@@ -179,10 +209,9 @@ def compute_net_entropy_transfer(g_t,g_s,phi,g_m,phi_m):
 
 def get_prefactor(temperature,mass,density,energyy,bmagg):
     """
-    Get the full normalised prefactor = (hat{T}_{s} \hat{F}_{0s} \hat{J}_{0sk})/ \hat{B}
+    Get the full normalised prefactor = (hat{T}_{s} \hat{F}_{0s}/ \hat{B}
+    Bessel factor J_{0sk_m} is treated seperately as it depends on mediator and therefor 4-dimensional array for (kys,kyt,kxs,kxt)
     """
-    #k_perp = 
-    #bessel = scipy.special.jv(0.0,k_perp)
     F0 = density*(mass/(2*np.pi*temperature))**(3.0/2.0)*np.exp(-energyy/temperature)
 
     return F0*temperature/(2*bmagg) #*bessel
@@ -248,6 +277,7 @@ if __name__ == "__main__":
         ),
         (nky, nky, nkx, nkx)
     )
+    bessel_factor = compute_bessel_of_mediator()
     
     #Do calculation
     entropy_result = parallel_compute_ENTROPY_transfer_along_theta_energy_lambda_sign()
