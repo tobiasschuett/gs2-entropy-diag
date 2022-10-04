@@ -23,18 +23,10 @@ ikyt = iky0
 #set zonal ky target and only use result of ky >= 0 values, symmetric anyways
 S_transfer_python_sum = np.array(S_transfer_python_sum[:,iky0:,ikyt,:,:])
 
-digit_precision = 5
+A = S_transfer[-1,:,:,:,:]
+B = S_transfer_python_sum
 
-# normalise to make rounding work
-maxTransfer = S_transfer.max()
-S_transfer /= maxTransfer
-S_transfer_python_sum /= maxTransfer
+resultsAgree = np.allclose(A,B)
 
-# set last timestep with "-1" and set kyt = 0 with "0"
-A = np.round(S_transfer[-1,:,:,:,:],digit_precision)
-B = np.round(S_transfer_python_sum,digit_precision)
-
-resultsAgree = (A==B).all()
-
-print("python script and gs2 diagnostic compared up to "+str(digit_precision)+" digits precision, result:")
+print("python script and gs2 diagnostic compared up default re_tol and abs_tol, result:")
 print(resultsAgree)
