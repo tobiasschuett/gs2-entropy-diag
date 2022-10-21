@@ -20,7 +20,8 @@ S_transfer_python_sum = S_transfer_python_sum[iky0:,iky0:,:,:]
 A = S_transfer[-1,:,:,:,:]
 B = S_transfer_python_sum
 
-#print("A",A)
+#for actually comparing values to manually check some of it to not rely fully on np.allclose
+#print("A",A) 
 #print("B",B)
 
 resultsAgree = np.allclose(A,B)
