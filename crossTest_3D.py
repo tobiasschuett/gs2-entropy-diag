@@ -1,19 +1,20 @@
 import netCDF4 as nc
 import numpy as np
-import warnings
-warnings.filterwarnings("ignore", category=DeprecationWarning)
+import xarray as xr
+from warnings import filterwarnings
+filterwarnings(action='ignore', category=DeprecationWarning, message='`np.bool` is a deprecated alias')
 
-data = nc.Dataset("nlinear1/test4/c1.out.nc") #test2 folder is baseline that works
+data = nc.Dataset("nlinear1/test4/c1.out.nc") #test4 folder is baseline that works
 S_transfer = np.array(data["entropy_transfer_3D"][:])
 
-S_transfer_python = np.load("Stransfer-test2_entropy.npz")
+S_transfer_python = xr.open_dataset("entropy_transfer.nc")  
 #sum along energy,lamda,sign; left over theta,kys,kyt,kxs,kxt
-S_transfer_python_sum = np.sum(S_transfer_python["entropy_result"],axis=(1,2,3)) #leave 0 which is theta
+S_transfer_python_sum = np.sum(S_transfer_python["entropy_transfer"],axis=(1,2,3)) #leave 0 which is theta
 
 #make 3D
-kx = S_transfer_python["kx"]
+kx = S_transfer_python["kxs"].values
 nkx = len(kx)
-ky = S_transfer_python["ky"]
+ky = S_transfer_python["kys"].values
 nky = len(ky)
 
 ikx0 = np.argmin(np.abs(kx))
