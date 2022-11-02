@@ -4,5 +4,6 @@ scriptPath="/users/tms535/Developer/zonal-transfer-functions/entropy_transfer/co
 outPath="entropy_transfer"
 nproc=2
 nproc_gs2=4
+sym_mode="non-sym" #"sym" or "non-sym"
 
-python3 $scriptPath $inputPath $nproc $outPath $nproc_gs2
+python3 $scriptPath $inputPath $nproc $outPath $nproc_gs2 $sym_mode
