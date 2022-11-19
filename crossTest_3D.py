@@ -4,10 +4,11 @@ import xarray as xr
 from warnings import filterwarnings
 filterwarnings(action='ignore', category=DeprecationWarning, message='`np.bool` is a deprecated alias')
 
-data = nc.Dataset("nlinear1/test4/c1.out.nc") #test4 folder is baseline that works
+data = nc.Dataset("nlinear/test/c1.out.nc")
+S_transfer_python = xr.open_dataset("entropy_transfer.nc")  
+
 S_transfer = np.array(data["entropy_transfer_3D"][:])
 
-S_transfer_python = xr.open_dataset("entropy_transfer.nc")  
 #sum along energy,lamda,sign; left over theta,kys,kyt,kxs,kxt
 S_transfer_python = S_transfer_python.sum(dim=["energy","lambda","sign"])
 
@@ -35,8 +36,8 @@ A = S_transfer[-1,:,:,:,:] #select last timestep of GS2 output
 B = S_transfer_python
 
 if True:
-	print(A.shape)
-	print(B.shape)
+	print("A.shape: ",A.shape)
+	print("B.shape: ",B.shape)
 	#for actually comparing values to manually check some of it to not rely fully on np.allclose
 	print("A",A[imidplane,1,:3,:])
 	print("B",B[imidplane,1,:3,:])
