@@ -16,10 +16,18 @@ echo 'updating python output based on phi and g from new sim output...'
 bash run-python-script.sh
 
 echo 'finished updating python output'
-echo 'running cross validation for 3D case...'
+echo 'running cross check for 3D case...'
 
 python crossTest_3D.py
 
-echo 'running cross validation for 4D case...'
+echo 'running cross check for 4D case...'
 
 python crossTest_4D.py
+
+echo 'running cross check for 4D_extended case...'
+
+python crossTest_4D_extended.py
+
+echo 'running cross check for write h...'
+
+python crossTest_h.py
